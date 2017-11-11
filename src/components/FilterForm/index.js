@@ -2,10 +2,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { callMenuItems } from "../../AC";
 import styles from "./style.css";
+import Preloader from "../Preloader";
+import Rx from "rxjs/Rx";
 
 class FilterForm extends Component {
   state = {
-    filter: ""
+    filter: "",
+    offset: 0,
+    limit: 10
   };
   /**
    * render
@@ -24,6 +28,7 @@ class FilterForm extends Component {
     });
     return (
       <form onSubmit={this.handleSubmit} className={styles.form}>
+        <Preloader loading={this.props.isLoading} />
         <div className={styles.container}>
           <input
             className={styles.input}
@@ -39,9 +44,9 @@ class FilterForm extends Component {
             Выбрать все
           </label>
         </div>
-
-        <ul className={styles.list}>{items}</ul>
-
+        <ul ref={this.getListItemsRef} className={styles.list}>
+          {items}
+        </ul>
         <div className={styles.footer}>
           <button
             className={styles.btn}
@@ -59,10 +64,15 @@ class FilterForm extends Component {
    * @param  {[type]} ev Event
    */
   handleInput = ev => {
-    console.log(ev.target.value);
+    let value = ev.target.value;
+
     this.setState({
-      filter: ev.target.value
+      filter: value
     });
+
+    this.props.callMenuItems(
+      `http://homework.connectia.com/api/product/list?offset=0&limit=10&filter=${value}`
+    );
   };
   /**
    * Обработка отправки формы
@@ -80,11 +90,39 @@ class FilterForm extends Component {
       "http://homework.connectia.com/api/product/list?offset=0&limit=10"
     );
   }
+
+  componentWillUpdate() {
+    console.log("componentWillUpdate ===>");
+  }
+
+  /**
+   * Получаем DOM элемент со списком продуктов
+   * @param  {HTMLElement} ref DOM элемент
+   * @return {HTMLElement}     DOM элемент
+   */
+  getListItemsRef = ref => {
+    let { callMenuItems } = this.props;
+
+    ref.addEventListener("scroll", event => {
+      var ref = event.target;
+      if (ref.scrollHeight - ref.scrollTop === ref.clientHeight) {
+        console.log("comp state", this.state);
+        this.setState({ offset: this.state.offset + this.state.limit });
+        callMenuItems(
+          `http://homework.connectia.com/api/product/list?offset=${this.state
+            .offset}&limit=${this.state.limit}`
+        );
+      }
+    });
+    return ref;
+  };
 }
 export default connect(
   (state, props) => {
+    console.log(state);
     return {
-      menuItems: state.menu.menuItems
+      menuItems: state.menu.menuItems,
+      isLoading: state.menu.isLoading
     };
   },
   { callMenuItems }

@@ -1,6 +1,6 @@
-import { Record, Map } from "immutable";
+import { Record, List } from "immutable";
 
-export const DefaulrReducerState = new Record({
+export const DefaultReducerState = new Record({
   isLoading: false,
-  collection: new Map({})
+  menuItems: new List([])
 });

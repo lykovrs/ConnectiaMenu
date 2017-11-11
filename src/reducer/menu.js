@@ -1,26 +1,26 @@
-import { LOAD_MENU_ITEMS, SUCCESS } from "../constants";
+import { LOAD_MENU_ITEMS, SUCCESS, START } from "../constants";
 import { List, Record } from "immutable";
+import { DefaultReducerState } from "./helpers";
 
-const FiltersModel = new Record({
-  menuItems: new List([])
-});
-
-const defaultMenuItems = new FiltersModel();
+const defaultState = new DefaultReducerState();
 
 /**
  * Редьюссер хранения и обработки данных фильтрации
- * @param  {object} [menuItems=defaultMenuItems] принимает объект для работы с фильтрами
+ * @param  {object} [state=defaultState] принимает объект для работы с фильтрами
  * @param  {object} action                   обект экшена
  * @return {object}                          параметры фильтрации
  */
-export default (menuItems = defaultMenuItems, action) => {
+export default (state = defaultState, action) => {
   const { type, collection } = action;
   switch (type) {
+    case LOAD_MENU_ITEMS + START:
+      return state.setIn(["isLoading"], true);
+
     case LOAD_MENU_ITEMS + SUCCESS:
-      console.log(action);
-      return menuItems.setIn(["menuItems"], collection);
+      console.log(collection);
+      return state.setIn(["menuItems"], collection).set("isLoading", false);
 
     default:
-      return menuItems;
+      return state;
   }
 };

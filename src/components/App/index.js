@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import styles from "./style.css";
-import { connect } from "react-redux";
-import { callMenuItems } from "../../AC";
 import MainMenu from "../MainMenu";
 
 class App extends Component {
@@ -21,13 +19,6 @@ class App extends Component {
       </div>
     );
   }
-
-  /**
-   * Делаем запрос всех статей с сервера
-   */
-  componentDidMount() {
-    this.props.callMenuItems();
-  }
 }
 
-export default connect(null, { callMenuItems })(App);
+export default App;

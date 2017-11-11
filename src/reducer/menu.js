@@ -1,26 +1,26 @@
-import { LOAD_MENU_ITEMS } from "../constants";
-import { Record, Map } from "immutable";
+import { LOAD_MENU_ITEMS, SUCCESS } from "../constants";
+import { List, Record } from "immutable";
 
 const FiltersModel = new Record({
-  selected: [],
-  dateRange: new Map()
+  menuItems: new List([])
 });
 
-const defaultFilters = new FiltersModel();
+const defaultMenuItems = new FiltersModel();
 
 /**
  * Редьюссер хранения и обработки данных фильтрации
- * @param  {object} [filters=defaultFilters] принимает объект для работы с фильтрами
+ * @param  {object} [menuItems=defaultMenuItems] принимает объект для работы с фильтрами
  * @param  {object} action                   обект экшена
  * @return {object}                          параметры фильтрации
  */
-export default (filters = defaultFilters, action) => {
-  const { type, payload } = action;
+export default (menuItems = defaultMenuItems, action) => {
+  const { type, collection } = action;
   switch (type) {
-    case LOAD_MENU_ITEMS:
-      return filters.setIn(["dateRange"], payload.dateRange);
+    case LOAD_MENU_ITEMS + SUCCESS:
+      console.log(action);
+      return menuItems.setIn(["menuItems"], collection);
 
     default:
-      return filters;
+      return menuItems;
   }
 };

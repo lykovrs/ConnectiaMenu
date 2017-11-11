@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import styles from "./style.css";
+import FilterForm from "../FilterForm";
 
 class MainMenu extends Component {
   state = {
@@ -9,7 +10,7 @@ class MainMenu extends Component {
     let items = [
       { id: 1, name: "Product_1" },
       { id: 2, name: "Product_2" },
-      { id: 3, name: "Продукты" },
+      { id: 3, name: "Product_3" },
       { id: 4, name: "Product_4" },
       { id: 5, name: "Product_5" }
     ];
@@ -21,12 +22,14 @@ class MainMenu extends Component {
       return (
         <li
           key={id}
-          onClick={this.handleClick(id)}
           className={
             isOpen === id ? styles.open + " " + styles.item : styles.item
           }
         >
-          {name}
+          <div className={styles.text} onClick={this.handleClick(id)}>
+            {name}
+          </div>
+          {this.getSubMenu(id)}
         </li>
       );
     });
@@ -39,8 +42,18 @@ class MainMenu extends Component {
 
   handleClick = id => ev => {
     ev.preventDefault();
-    if (this.state.isOpen === id) return;
-    this.setState({ isOpen: id });
+    this.state.isOpen === id
+      ? this.setState({ isOpen: null })
+      : this.setState({ isOpen: id });
+  };
+
+  getSubMenu = id => {
+    if (this.state.isOpen === id)
+      return (
+        <div className={styles.submenu}>
+          <FilterForm />
+        </div>
+      );
   };
 }
 

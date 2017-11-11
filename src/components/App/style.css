@@ -13,21 +13,21 @@
 
 .header {
   background-color: #222;
+  color: white;
   height: 190px;
   padding: 20px;
-  color: white;
 }
 
 .intro {
+  box-sizing: border-box;
   height: calc(100vh - 190px);
   overflow: hidden;
-  box-sizing: border-box;
 }
 
 .aside {
-  width: 360px;
   height: 100%;
   padding: 2px;
+  width: 360px;
 }
 
 @keyframes logoSpin {

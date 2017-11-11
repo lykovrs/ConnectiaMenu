@@ -4,10 +4,10 @@ import { LOAD_MENU_ITEMS } from "../constants";
  * Создает экшн для запроса пунктов меню
  * @return {object} объект экшена
  */
-export function callMenuItems() {
+export function callMenuItems(url) {
   const action = {
     type: LOAD_MENU_ITEMS,
-    callAPI: "http://homework.connectia.com/api/product/list?offset=10&limit=10"
+    callAPI: url
   };
 
   return action;

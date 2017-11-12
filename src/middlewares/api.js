@@ -6,7 +6,7 @@ export default store => next => action => {
   const { callAPI, type, ...rest } = action;
   next({ ...rest, type: type + START });
 
-  fetch(callAPI, { mode: "cors" })
+  fetch(callAPI, { mode: "cors", cache: "force-cache" })
     .then(function(response) {
       if (response.status !== 200) {
         console.log(
@@ -18,9 +18,11 @@ export default store => next => action => {
     })
     .then(function(collection) {
       // TODO: dev only !!!!
-      setTimeout(() => {
-        next({ ...rest, type: type + SUCCESS, collection });
-      }, 1000);
+      // setTimeout(() => {
+      //   next({ ...rest, type: type + SUCCESS, collection });
+      // }, 2000);
+
+      next({ ...rest, type: type + SUCCESS, collection });
     })
     .catch(function(err) {
       next({ ...rest, type: type + FAIL, err });

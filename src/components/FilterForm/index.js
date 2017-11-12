@@ -3,13 +3,13 @@ import { connect } from "react-redux";
 import { callMenuItems } from "../../AC";
 import styles from "./style.css";
 import Preloader from "../Preloader";
-import Rx from "rxjs/Rx";
+import { createSelector } from "reselect";
 
 class FilterForm extends Component {
   state = {
     filter: "",
     offset: 0,
-    limit: 10
+    limit: 100
   };
   /**
    * render
@@ -29,6 +29,7 @@ class FilterForm extends Component {
     return (
       <form onSubmit={this.handleSubmit} className={styles.form}>
         <Preloader loading={this.props.isLoading} />
+
         <div className={styles.container}>
           <input
             className={styles.input}
@@ -44,7 +45,7 @@ class FilterForm extends Component {
             Выбрать все
           </label>
         </div>
-        <ul ref={this.getListItemsRef} className={styles.list}>
+        <ul ref={elem => (this.list = elem)} className={styles.list}>
           {items}
         </ul>
         <div className={styles.footer}>
@@ -59,6 +60,14 @@ class FilterForm extends Component {
       </form>
     );
   }
+
+  getFetchUrl = (offset = this.state.offset, filter = this.state.filter) => {
+    let url = `http://homework.connectia.com/api/product/list?offset=${offset}&limit=${this
+      .state.limit}`;
+
+    if (filter) url += `&filter=${filter}`;
+    return url;
+  };
   /**
    * Обрабатываем ввод в поля формы и отправляем в стэйт
    * @param  {[type]} ev Event
@@ -66,12 +75,12 @@ class FilterForm extends Component {
   handleInput = ev => {
     let value = ev.target.value;
 
-    this.setState({
-      filter: value
-    });
-
-    this.props.callMenuItems(
-      `http://homework.connectia.com/api/product/list?offset=0&limit=10&filter=${value}`
+    this.setState(
+      {
+        filter: value,
+        offset: 0
+      },
+      this.props.callMenuItems(this.getFetchUrl(0, value))
     );
   };
   /**
@@ -86,37 +95,38 @@ class FilterForm extends Component {
    * Делаем запрос всех статей с сервера
    */
   componentDidMount() {
-    this.props.callMenuItems(
-      "http://homework.connectia.com/api/product/list?offset=0&limit=10"
-    );
+    this.props.callMenuItems(this.getFetchUrl());
+    this.list.addEventListener("scroll", this.handleNvEnter);
   }
 
-  componentWillUpdate() {
-    console.log("componentWillUpdate ===>");
+  componentWillUnmount() {
+    this.list.removeEventListener("scroll", this.handleNvEnter);
   }
 
-  /**
-   * Получаем DOM элемент со списком продуктов
-   * @param  {HTMLElement} ref DOM элемент
-   * @return {HTMLElement}     DOM элемент
-   */
-  getListItemsRef = ref => {
+  handleNvEnter = event => {
     let { callMenuItems } = this.props;
 
-    ref.addEventListener("scroll", event => {
-      var ref = event.target;
-      if (ref.scrollHeight - ref.scrollTop === ref.clientHeight) {
-        console.log("comp state", this.state);
-        this.setState({ offset: this.state.offset + this.state.limit });
-        callMenuItems(
-          `http://homework.connectia.com/api/product/list?offset=${this.state
-            .offset}&limit=${this.state.limit}`
-        );
+    var ref = event.target;
+    if (!this.props.isLoading) {
+      // прокрутка вверх
+      if (ref.scrollTop === 0 && this.state.offset > 0) {
+        let offset = this.state.offset - this.state.limit;
+        this.setState({ offset }, callMenuItems(this.getFetchUrl(offset)));
+        ref.scrollTop = ref.clientHeight;
       }
-    });
-    return ref;
+      // прокрутка вниз
+      if (ref.scrollHeight - ref.scrollTop === ref.clientHeight) {
+        let offset = this.state.offset + this.state.limit;
+        this.setState({ offset }, callMenuItems(this.getFetchUrl(offset)));
+        ref.scrollTop = 0;
+      }
+    }
   };
 }
+
+// const idsSelector = (state, props) => state.admin[props.resource].ids;
+// const dataSelector = (state, props) => state.admin[props.resource].data;
+
 export default connect(
   (state, props) => {
     console.log(state);

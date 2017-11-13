@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 import styles from "./style.css";
 import MainMenu from "../MainMenu";
+import DataChanger from "../DataChanger";
 
 class App extends Component {
   render() {
@@ -15,6 +16,9 @@ class App extends Component {
           <aside className={styles.aside}>
             <MainMenu />
           </aside>
+          <section>
+            <DataChanger />
+          </section>
         </div>
       </div>
     );

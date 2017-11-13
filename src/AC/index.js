@@ -1,28 +1,26 @@
-import { LOAD_MENU_ITEMS } from "../constants";
+import { LOAD_MENU_ITEMS, DELETE_ALL_ITEMS } from "../constants";
 
 /**
  * Создает экшн для запроса пунктов меню
  * @return {object} объект экшена
  */
-export function callMenuItems(url) {
+export function callMenuItems(num) {
   const action = {
     type: LOAD_MENU_ITEMS,
-    callAPI: url
+    callAPI: `http://homework.connectia.com/api/product/list?offset=0&limit=${num}`
   };
 
   return action;
 }
 
 /**
- * Создает экшн для запроса текста статьи
+ * Создает экшн удаления всех пунктов меню
  * @return {object} объект экшена
  */
-// export function loadArticle(id) {
-//   const action = {
-//     type: LOAD_ARTICLE,
-//     payload: { id },
-//     callAPI: `http://localhost:3001/api/article/${id}`
-//   };
-//
-//   return action;
-// }
+export function deleteAllItems() {
+  const action = {
+    type: DELETE_ALL_ITEMS
+  };
+
+  return action;
+}

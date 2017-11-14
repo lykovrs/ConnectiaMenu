@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
+import { filterMenuItems } from "../../AC";
 import styles from "./style.css";
 import Preloader from "../Preloader";
 import { createSelector } from "reselect";
@@ -94,6 +94,8 @@ class FilterForm extends Component {
   handleInput = ev => {
     let value = ev.target.value;
 
+    this.props.filterMenuItems(value);
+
     this.setState({
       filter: value
     });
@@ -117,11 +119,19 @@ class FilterForm extends Component {
   };
 }
 
-export default connect((state, props) => {
-  console.log(state);
+export default connect(
+  (state, props) => {
+    console.log(state);
+    let { menuItems, isLoading, filter } = state.menu;
 
-  return {
-    menuItems: state.menu.menuItems,
-    isLoading: state.menu.isLoading
-  };
-}, {})(FilterForm);
+    let filtered = menuItems.filter(item => {
+      return item.name.indexOf(filter) >= 0;
+    });
+    console.log(filter, "filtered", filtered);
+    return {
+      menuItems: filtered,
+      isLoading: state.menu.isLoading
+    };
+  },
+  { filterMenuItems }
+)(FilterForm);

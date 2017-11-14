@@ -1,6 +1,7 @@
 import {
   LOAD_MENU_ITEMS,
   DELETE_ALL_ITEMS,
+  FILTER_ITEMS,
   SUCCESS,
   START
 } from "../constants";
@@ -26,6 +27,9 @@ export default (state = defaultState, action) => {
 
     case DELETE_ALL_ITEMS:
       return state.setIn(["menuItems"], []).set("isLoading", false);
+
+    case FILTER_ITEMS:
+      return state.setIn(["filter"], payload.filter);
 
     default:
       return state;

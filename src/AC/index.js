@@ -1,4 +1,4 @@
-import { LOAD_MENU_ITEMS, DELETE_ALL_ITEMS } from "../constants";
+import { LOAD_MENU_ITEMS, DELETE_ALL_ITEMS, FILTER_ITEMS } from "../constants";
 
 /**
  * Создает экшн для запроса пунктов меню
@@ -20,6 +20,21 @@ export function callMenuItems(num) {
 export function deleteAllItems() {
   const action = {
     type: DELETE_ALL_ITEMS
+  };
+
+  return action;
+}
+
+/**
+ * Создает экшн для фильтрации
+ * @return {object} объект экшена
+ */
+export function filterMenuItems(value) {
+  const action = {
+    type: FILTER_ITEMS,
+    payload: {
+      filter: value
+    }
   };
 
   return action;

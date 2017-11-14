@@ -5,9 +5,8 @@ import styles from "./style.css";
 import Preloader from "../Preloader";
 import { createSelector } from "reselect";
 import ReactList from "react-list";
+import Checkbox from "../Checkbox";
 import { Map } from "immutable";
-
-let defaultSelectedSate = new Map();
 
 /**
  * Компонент формы с фильтрацией и списком
@@ -16,7 +15,7 @@ let defaultSelectedSate = new Map();
 class FilterForm extends Component {
   state = {
     filter: "",
-    selected: defaultSelectedSate,
+    selected: new Map(),
     checked: false
   };
 
@@ -29,12 +28,13 @@ class FilterForm extends Component {
   renderItem = (index, key) => {
     return (
       <div className={styles.item} key={key}>
-        <label className={styles.label}>
-          <input
+        <label className={styles.label} onClick={this.handleSelected(key)}>
+          <Checkbox />
+          {/* <input
             className={styles.check}
             onChange={this.handleSelected(key)}
             type="checkbox"
-          />
+          /> */}
           {this.props.menuItems[index].name}
         </label>
       </div>
@@ -60,8 +60,8 @@ class FilterForm extends Component {
           />
         </div>
         <div className={styles.item}>
-          <label className={styles.label}>
-            <input className={styles.check} type="checkbox" />
+          <label className={styles.label} onClick={this.handleSelectAll}>
+            <Checkbox />
             Выбрать все
           </label>
         </div>
@@ -115,19 +115,30 @@ class FilterForm extends Component {
    * @param  {string} id каррируем id
    */
   handleSelected = id => ev => {
-    ev.preventDefault();
+    let state = this.state.selected.get(id);
+
+    this.setState({
+      selected: this.state.selected.set(id, state ? false : true)
+    });
+  };
+
+  /**
+   * Обработка выбора всех элемнтоа
+   * @param  {string} id каррируем id
+   */
+  handleSelectAll = ev => {
+    console.log("all");
   };
 }
 
 export default connect(
   (state, props) => {
-    console.log(state);
-    let { menuItems, isLoading, filter } = state.menu;
+    const { menuItems, isLoading, filter } = state.menu;
 
-    let filtered = menuItems.filter(item => {
+    const filtered = menuItems.filter(item => {
       return item.name.indexOf(filter) >= 0;
     });
-    console.log(filter, "filtered", filtered);
+
     return {
       menuItems: filtered,
       isLoading: state.menu.isLoading

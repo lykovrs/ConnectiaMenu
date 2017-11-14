@@ -1,0 +1,29 @@
+.input {
+  display: none;
+}
+
+.span {
+  color: red;
+  display: flex;
+  width: 20px;
+  height: 20px;
+  background: none;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin: 5px;
+  border: 2px solid #fff;
+  box-sizing: border-box;
+  transition: all 150ms;
+}
+.input:checked + .span {
+  border-width: 9px;
+}
+.input:checked + .span::before {
+  content: "\2713";
+  font-size: 20px;
+  color: black;
+}
+.input:disabled + .span {
+  background: rgba(0, 0, 0, 0.35);
+}
